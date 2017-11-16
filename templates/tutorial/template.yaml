@@ -5,7 +5,14 @@ changes:
   - Added input parameters
    
 environments:
-  default:                     # global defaults defined here
+  default:                     # global defaults
     foo: bar                   # basic variable with default value
     name: ${}                  # required parameter, must be provided by the client
-    greeting: "Hello ${name}!" # parameter value can reference other parameters 
+    greeting: "Hello ${name}!" # parameter can reference other parameters
+  dev:                         # parameters for environment.type=dev
+    hello: Hi                  # new default value for existing parameter
+    name: Developer            # default value for previously required parameter
+  test:                        # parameters for environment.type=test
+    hello: ${}                 # now hello parameter is required
+    prev.name: Developer       # new optional parameter
+    greeting: "Goodbye ${prev.name}, ${hello}, ${name}!!!" # different default
