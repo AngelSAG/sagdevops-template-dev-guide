@@ -1,3 +1,11 @@
 alias: tutorial
-description: Hello Command Central DevOps World!
-version: 0.1
+description: How to add parameters
+version: 0.2
+changes:
+  - Added input parameters
+   
+environments:
+  default:                     # global defaults defined here
+    foo: bar                   # basic variable with default value
+    name: ${}                  # required parameter, must be provided by the client
+    greeting: "Hello ${name}!" # parameter value can reference other parameters 
