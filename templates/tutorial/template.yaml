@@ -1,6 +1,6 @@
 alias: tutorial
 description: How to bootstrap local nodes
-version: 0.3
+version: 0.4
 changes:
   - 0.1 Initial draft
   - 0.2 Added input parameters
