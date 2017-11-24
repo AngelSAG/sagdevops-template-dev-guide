@@ -1,6 +1,6 @@
 alias: tutorial
 description: How to install and update main products
-version: 0.7
+version: 0.8
 changes:
   - 0.1 Initial draft
   - 0.2 Added input parameters
@@ -9,6 +9,7 @@ changes:
   - 0.5 Added fix installation
   - 0.6 Added main products and fix installation
   - 0.7 Added licenses and runtime instances
+  - 0.8 Added configurations
    
 environments:
   default:
@@ -54,6 +55,12 @@ templates:                                         # TEMPLATES definition
           diagnostic.port:  5552
           jmx.port:         5553
           license.file: IntegrationServer/config/licenseKey.xml
+          configuration:
+            OSGI-IS_inst1:
+              COMMON-MEMORY:
+                COMMON-MEMORY:
+                  InitSize: '128'
+                  MaxSize: '512'
 
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
@@ -66,6 +73,16 @@ templates:                                         # TEMPLATES definition
           instance.ip:      localhost
           runtimeComponentId: Universal-Messaging-${instance.name}
           license.file: UniversalMessaging/server/templates/licence.xml
+          configuration:
+            Universal-Messaging-inst1:
+              COMMON-MEMORY:
+                COMMON-MEMORY:
+                  InitSize: '128'
+                  MaxSize: '512'
+                  ExtendedProperties:
+                    Property:
+                    - '@name': -XX:MaxDirectMemorySize
+                      $: 1G
     fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
