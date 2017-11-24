@@ -1,6 +1,6 @@
 alias: tutorial
 description: How to install and update main products
-version: 0.8
+version: 0.9
 changes:
   - 0.1 Initial draft
   - 0.2 Added input parameters
@@ -10,6 +10,7 @@ changes:
   - 0.6 Added main products and fix installation
   - 0.7 Added licenses and runtime instances
   - 0.8 Added configurations
+  - 0.9 Added remote server environment support
    
 environments:
   default:
@@ -23,6 +24,26 @@ environments:
     um.fixes:     ALL                              # Set of UM fixes 
     is.license.key.alias: ${}                      # Alias for IS license key
     um.license.key.alias: ${}                      # Alias for UM license key   
+    is.memory.init: 128
+    is.memory.max: 512
+    um.memory.init: 128
+    um.memory.max: 512
+
+#    os.platform:  LNXAMD64                  # remote machine OS platform code
+    os.username:  ${}                       # remote machine SSH username
+    os.password:  ${}                       # remote machine SSH password
+    os.auth.method: PASSWORD                # remote machine auth method
+                                            # PASSWORD,INTERACTIVE,CERTIFICATE
+    os.port:      22                        # remote machine SSH port
+    
+
+  server:
+    is.memory.init: 512
+    is.memory.max: 1024
+    um.memory.init: 1024
+    um.memory.max: 1024
+    spm.hosts: ${}
+
 
 layers:                                            # LAYERS definition
   management:                                      # management layer with SPMs
@@ -59,8 +80,8 @@ templates:                                         # TEMPLATES definition
             OSGI-IS_inst1:
               COMMON-MEMORY:
                 COMMON-MEMORY:
-                  InitSize: '128'
-                  MaxSize: '512'
+                  InitSize: '${is.memory.init}'
+                  MaxSize: '${is.memory.max}'
 
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
@@ -77,8 +98,8 @@ templates:                                         # TEMPLATES definition
             Universal-Messaging-inst1:
               COMMON-MEMORY:
                 COMMON-MEMORY:
-                  InitSize: '128'
-                  MaxSize: '512'
+                  InitSize: '${um.memory.init}'
+                  MaxSize: '${um.memory.max}'
                   ExtendedProperties:
                     Property:
                     - '@name': -XX:MaxDirectMemorySize
@@ -93,6 +114,11 @@ nodes:                                             # NODES definition
      bootstrapInfo:
        installDir: ${install.dir}                  # installation directory
        installer:  ${cc.installer}                 # cc installer that can be found in cc_home/profiles/CCE/data/installers     
+        credentials:                               # remote host credentials
+          userName: ${os.username}                 # remote host SSH username
+          password: ${os.password}                 # remote host SSH password
+          authenticationMethod: ${os.auth.method}  # auth method
+
 
    ${spm.alias}:                                   # definition for specific nodeAlias
      host: localhost                               # Use localhost
@@ -103,3 +129,7 @@ provision:                                         # PROVISIONing mapping of lay
     management: ${spm.alias}                       # management layer is single node
     messaging:   ${spm.alias}                      # messaging layer is single node
     integration: ${spm.alias}                      # integration layer is single node
+  server:                                          # default environment type
+    management: ${spm.hosts}                       # management layer is single node
+    messaging:   ${spm.hosts}                      # messaging layer is single node
+    integration: ${spm.hosts}                      # integration layer is single node
