@@ -1,6 +1,6 @@
 alias: tutorial
 description: How to install and update main products
-version: 0.6
+version: 0.7
 changes:
   - 0.1 Initial draft
   - 0.2 Added input parameters
@@ -8,6 +8,7 @@ changes:
   - 0.4 Added products/plugins installation
   - 0.5 Added fix installation
   - 0.6 Added main products and fix installation
+  - 0.7 Added licenses and runtime instances
    
 environments:
   default:
@@ -19,6 +20,8 @@ environments:
     spm.fixes:    ALL                              # Default list of fixes to install
     is.fixes:     ALL                              # Set of IS fixes 
     um.fixes:     ALL                              # Set of UM fixes 
+    is.license.key.alias: ${}                      # Alias for IS license key
+    um.license.key.alias: ${}                      # Alias for UM license key   
 
 layers:                                            # LAYERS definition
   management:                                      # management layer with SPMs
@@ -42,12 +45,27 @@ templates:                                         # TEMPLATES definition
       NUMspm:                                      # Platform Manager Plug-Ins / UM
     fixes: ${spm.fixes}                            # fixes to install
   is:                                              # template alias
+    licenses:                                      # copy lincense from the license repository to a template location
+         "IntegrationServer/config/licenseKey.xml": ${is.license.key.alias} 
     products:                                      # product list to install
       integrationServer:                           # Integration Server productId
+        inst1:                                     # instance name to create or update
+          primary.port:     5551
+          diagnostic.port:  5552
+          jmx.port:         5553
+          license.file: IntegrationServer/config/licenseKey.xml
+
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
+    licenses:                                      # copy lincense from the license repository to a template location
+          "UniversalMessaging/server/templates/licence.xml": ${um.license.key.alias}     
     products:                                      # product list to install
       NUMRealmServer:                              # Universal Messaging productId
+        inst1:                                     # instance name to create or update
+          instance.port:    9001
+          instance.ip:      localhost
+          runtimeComponentId: Universal-Messaging-${instance.name}
+          license.file: UniversalMessaging/server/templates/licence.xml
     fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
