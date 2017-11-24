@@ -1,30 +1,54 @@
 alias: tutorial
-description: How to bootstrap local nodes
-version: 0.5
+description: How to install and update main products
+version: 0.6
 changes:
   - 0.1 Initial draft
   - 0.2 Added input parameters
   - 0.3 Added local node bootstrap
   - 0.4 Added products/plugins installation
   - 0.5 Added fix installation
+  - 0.6 Added main products and fix installation
    
 environments:
   default:
     install.dir:  ${}                              # SPM installation directory
     spm.port:     8192                             # SPM connection port
     spm.alias:    dev${spm.port}                   # SPM alias
-    product.repo: ${}                              # default product repo                   
+    product.repo: ${}                              # Product repo           
+    fix.repo:     ${}                              # Fixes repository
+    spm.fixes:    ALL                              # Default list of fixes to install
+    is.fixes:     ALL                              # Set of IS fixes 
+    um.fixes:     ALL                              # Set of UM fixes 
 
 layers:                                            # LAYERS definition
   management:                                      # management layer with SPMs
     productRepo: ${product.repo}                   # product repository for this layer 
+    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [plugins]                         # templates to apply to this layer
+  messaging:
+    productRepo: ${product.repo}                   # product repository for this layer 
+    fixRepo:     ${fix.repo}                       # fix repository for this layer
+    templates:   [um]                              # templates to apply to this layer
+  integration:
+    productRepo: ${product.repo}                   # product repository for this layer 
+    fixRepo:     ${fix.repo}                       # fix repository for this layer
+    templates:   [is]                              # templates to apply to this layer
+    
 
 templates:                                         # TEMPLATES definition
   plugins:                                         # template alias
     products:                                      # product list to install
       ISspm:                                       # Platform Manager Plug-Ins / IS
       NUMspm:                                      # Platform Manager Plug-Ins / UM
+    fixes: ${spm.fixes}                            # fixes to install
+  is:                                              # template alias
+    products:                                      # product list to install
+      integrationServer:                           # Integration Server productId
+    fixes: ${is.fixes}                             # fixes to install
+  um:                                              # template alias
+    products:                                      # product list to install
+      NUMRealmServer:                              # Universal Messaging productId
+    fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
  default:                                          # defaults for any environment type
@@ -42,3 +66,5 @@ nodes:                                             # NODES definition
 provision:                                         # PROVISIONing mapping of layers to nodes
   default:                                         # default environment type
     management: ${spm.alias}                       # management layer is single node
+    messaging:   ${spm.alias}                      # messaging layer is single node
+    integration: ${spm.alias}                      # integration layer is single node
