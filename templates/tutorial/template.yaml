@@ -24,12 +24,16 @@ environments:
     um.fixes:     ALL                              # Set of UM fixes 
     is.license.key.alias: ${}                      # Alias for IS license key
     um.license.key.alias: ${}                      # Alias for UM license key   
-    is.memory.init: 128
-    is.memory.max: 512
-    um.memory.init: 128
-    um.memory.max: 512
 
-#    os.platform:  LNXAMD64                  # remote machine OS platform code
+    #configuration
+    is.memory.init:   ${}
+    is.memory.max:    ${}
+    um.memory.init:   ${}
+    um.memory.max:    ${}
+    um.memory.direct: ${}
+
+
+    #os.platform:  LNXAMD64                  # remote machine OS platform code
     os.username:  ${}                       # remote machine SSH username
     os.password:  ${}                       # remote machine SSH password
     os.auth.method: PASSWORD                # remote machine auth method
@@ -38,10 +42,6 @@ environments:
     
 
   server:
-    is.memory.init: 512
-    is.memory.max: 1024
-    um.memory.init: 1024
-    um.memory.max: 1024
     spm.hosts: ${}
 
 
@@ -103,7 +103,7 @@ templates:                                         # TEMPLATES definition
                   ExtendedProperties:
                     Property:
                     - '@name': -XX:MaxDirectMemorySize
-                      $: 1G
+                      $: ${um.memory.direct}
     fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
@@ -126,10 +126,10 @@ nodes:                                             # NODES definition
  
 provision:                                         # PROVISIONing mapping of layers to nodes
   default:                                         # default environment type
-    management: ${spm.alias}                       # management layer is single node
+    management:  ${spm.alias}                      # management layer is single node
     messaging:   ${spm.alias}                      # messaging layer is single node
     integration: ${spm.alias}                      # integration layer is single node
   server:                                          # default environment type
-    management: ${spm.hosts}                       # management layer is single node
-    messaging:   ${spm.hosts}                      # messaging layer is single node
-    integration: ${spm.hosts}                      # integration layer is single node
+    management:  ${spm.host}                       # management layer is single node
+    messaging:   ${spm.host}                       # messaging layer is single node
+    integration: ${spm.host}                       # integration layer is single node
