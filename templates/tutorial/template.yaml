@@ -24,6 +24,14 @@ environments:
     is.license.key.alias: ${}                      # Alias for IS license key
     um.license.key.alias: ${}                      # Alias for UM license key   
 
+    #configuration
+    is.memory.init:   ${}
+    is.memory.max:    ${}
+    um.memory.init:   ${}
+    um.memory.max:    ${}
+    um.memory.direct: ${}
+
+
 layers:                                            # LAYERS definition
   management:                                      # management layer with SPMs
     productRepo: ${product.repo}                   # product repository for this layer 
@@ -59,8 +67,8 @@ templates:                                         # TEMPLATES definition
             OSGI-IS_inst1:
               COMMON-MEMORY:
                 COMMON-MEMORY:
-                  InitSize: '128'
-                  MaxSize: '512'
+                  InitSize: '${is.memory.init}'
+                  MaxSize: '${is.memory.max}'
 
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
@@ -77,12 +85,12 @@ templates:                                         # TEMPLATES definition
             Universal-Messaging-inst1:
               COMMON-MEMORY:
                 COMMON-MEMORY:
-                  InitSize: '128'
-                  MaxSize: '512'
+                  InitSize: '${um.memory.init}'
+                  MaxSize: '${um.memory.max}'
                   ExtendedProperties:
                     Property:
                     - '@name': -XX:MaxDirectMemorySize
-                      $: 1G
+                      $: ${um.memory.direct}
     fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
