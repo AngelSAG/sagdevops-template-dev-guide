@@ -91,6 +91,35 @@ templates:                                         # TEMPLATES definition
                 COMMON-MEMORY:
                   InitSize: '${is.memory.init}'
                   MaxSize: '${is.memory.max}'
+              COMMON-WMMESSAGING:
+                COMMON-WMMESSAGING-IS_UM_CONNECTION:
+                  Messaging:
+                    '@alias': IS_UM_CONNECTION
+                    Description: system generated Universal Messaging connection alias
+                    ClientPrefix: J_jRQtEolDEurgAVIwwwADXaZQs_
+                    ShareClientPrefix: 'false'
+                    Enabled: 'true'
+                    Provider:
+                      '@type': UM
+                      URL: ${is.um.url} 
+                      MaxRetryAttempts: '5'
+                      RetryInterval: '30000'
+                      Auth:
+                        '@type': none
+                    ExtendedProperties:
+                      Property:
+                      - '@name': useCSQ
+                        $: 'true'
+                      - '@name': csqDrainInOrder
+                        $: 'true'
+                      - '@name': enableRequestReply
+                        $: 'true'
+                      - '@name': csqSize
+                        $: '-1'
+                      - '@name': um_followTheMasterForSubscribe
+                        $: 'true'
+                      - '@name': um_followTheMasterForPublish
+                        $: 'true'
 
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
