@@ -32,17 +32,26 @@ environments:
     um.memory.max:    ${}
     um.memory.direct: ${}
 
+    um.instance.port: 9001
 
-    #os.platform:  LNXAMD64                  # remote machine OS platform code
-    os.username:  ${}                       # remote machine SSH username
-    os.password:  ${}                       # remote machine SSH password
-    os.auth.method: PASSWORD                # remote machine auth method
-                                            # PASSWORD,INTERACTIVE,CERTIFICATE
-    os.port:      22                        # remote machine SSH port
+
+    #os.platform:  LNXAMD64                       # remote machine OS platform code
+    os.username:  ${}                             # remote machine SSH username
+    os.password:  ${}                             # remote machine SSH password
+    os.auth.method: PASSWORD                      # remote machine auth method
+                                                  # PASSWORD,INTERACTIVE,CERTIFICATE
+    os.port:      22                              # remote machine SSH port
     
 
   server:
     spm.hosts: ${}
+
+
+  cluster:                                        ### new environment type
+    spm.hosts: ${}                                # one or more hosts for the environment
+    is.hosts: ${}                                 # one or more hosts defined as [host1,host2]
+    um.host: ${}                                  # one host
+    is.um.url: "nsp://${um.host}:${um.instance.port}" # proper UM URL
 
 
 layers:                                            # LAYERS definition
@@ -90,7 +99,7 @@ templates:                                         # TEMPLATES definition
     products:                                      # product list to install
       NUMRealmServer:                              # Universal Messaging productId
         inst1:                                     # instance name to create or update
-          instance.port:    9001
+          instance.port:    ${um.instance.port}
           instance.ip:      localhost
           runtimeComponentId: Universal-Messaging-${instance.name}
           license.file: UniversalMessaging/server/templates/licence.xml
@@ -114,7 +123,7 @@ nodes:                                             # NODES definition
      bootstrapInfo:
        installDir: ${install.dir}                  # installation directory
        installer:  ${cc.installer}                 # cc installer that can be found in cc_home/profiles/CCE/data/installers     
-        credentials:                               # remote host credentials
+       credentials:                               # remote host credentials
           userName: ${os.username}                 # remote host SSH username
           password: ${os.password}                 # remote host SSH password
           authenticationMethod: ${os.auth.method}  # auth method
@@ -133,3 +142,7 @@ provision:                                         # PROVISIONing mapping of lay
     management:  ${spm.host}                       # management layer is single node
     messaging:   ${spm.host}                       # messaging layer is single node
     integration: ${spm.host}                       # integration layer is single node
+  cluster:                                       ### new environment type
+    management:  ${spm.hosts}                      # management layer
+    messaging:   ${um.host}                        # messaging layer
+    integration: ${is.hosts}                       # integration layer
