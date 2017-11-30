@@ -35,7 +35,6 @@ environments:
     um.instance.port: 9001
 
 
-    #os.platform:  LNXAMD64                       # remote machine OS platform code
     os.username:  ${}                             # remote machine SSH username
     os.password:  ${}                             # remote machine SSH password
     os.auth.method: PASSWORD                      # remote machine auth method
