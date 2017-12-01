@@ -33,7 +33,7 @@ environments:
     um.memory.direct: ${}
 
     um.instance.port: 9001
-
+    #is.um.url: "nsp://localhost:${um.instance.port}" # proper UM URL
 
     os.username:  ${}                             # remote machine SSH username
     os.password:  ${}                             # remote machine SSH password
@@ -43,7 +43,8 @@ environments:
     
 
   server:
-    spm.hosts: ${}
+    spm.host: ${}
+    is.um.url: "nsp://${spm.host}:${um.instance.port}" # proper UM URL
 
 
   cluster:                                        ### new environment type
@@ -90,6 +91,7 @@ templates:                                         # TEMPLATES definition
                 COMMON-MEMORY:
                   InitSize: '${is.memory.init}'
                   MaxSize: '${is.memory.max}'
+            integrationServer-inst1:
               COMMON-WMMESSAGING:
                 COMMON-WMMESSAGING-IS_UM_CONNECTION:
                   Messaging:
@@ -100,7 +102,7 @@ templates:                                         # TEMPLATES definition
                     Enabled: 'true'
                     Provider:
                       '@type': UM
-                      URL: ${is.um.url} 
+                      URL: ${is.um.url}
                       MaxRetryAttempts: '5'
                       RetryInterval: '30000'
                       Auth:
@@ -119,7 +121,6 @@ templates:                                         # TEMPLATES definition
                         $: 'true'
                       - '@name': um_followTheMasterForPublish
                         $: 'true'
-
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
     licenses:                                      # copy lincense from the license repository to a template location
