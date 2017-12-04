@@ -47,13 +47,6 @@ environments:
     is.um.url: "nsp://${spm.host}:${um.instance.port}" # proper UM URL
 
 
-  cluster:                                        ### new environment type
-    spm.hosts: ${}                                # one or more hosts for the environment
-    is.hosts: ${}                                 # one or more hosts defined as [host1,host2]
-    um.host: ${}                                  # one host
-    is.um.url: "nsp://${um.host}:${um.instance.port}" # proper UM URL
-
-
 layers:                                            # LAYERS definition
   management:                                      # management layer with SPMs
     productRepo: ${product.repo}                   # product repository for this layer 
@@ -171,7 +164,3 @@ provision:                                         # PROVISIONing mapping of lay
     management:  ${spm.host}                       # management layer is single node
     messaging:   ${spm.host}                       # messaging layer is single node
     integration: ${spm.host}                       # integration layer is single node
-  cluster:                                       ### new environment type
-    management:  ${spm.hosts}                      # management layer
-    messaging:   ${um.host}                        # messaging layer
-    integration: ${is.hosts}                       # integration layer
