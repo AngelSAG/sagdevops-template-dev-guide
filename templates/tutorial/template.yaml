@@ -33,7 +33,7 @@ environments:
     um.memory.direct: ${}
 
     um.instance.port: 9001
-    #is.um.url: "nsp://localhost:${um.instance.port}" # proper UM URL
+    is.um.url: "nsp://localhost:${um.instance.port}" # proper UM URL
 
     os.username:  ${}                             # remote machine SSH username
     os.password:  ${}                             # remote machine SSH password
