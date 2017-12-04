@@ -1,6 +1,6 @@
 alias: tutorial
 description: How to install and update main products
-version: 0.9
+version: 0.8
 changes:
   - 0.1 Initial draft
   - 0.2 Added input parameters
@@ -10,7 +10,6 @@ changes:
   - 0.6 Added main products and fix installation
   - 0.7 Added licenses and runtime instances
   - 0.8 Added configurations
-  - 0.9 Added remote server environment support
    
 environments:
   default:
@@ -34,24 +33,6 @@ environments:
 
     um.instance.port: 9001
     is.um.url: "nsp://localhost:${um.instance.port}" # proper UM URL
-
-    os.username:  ${}                             # remote machine SSH username
-    os.password:  ${}                             # remote machine SSH password
-    os.auth.method: PASSWORD                      # remote machine auth method
-                                                  # PASSWORD,INTERACTIVE,CERTIFICATE
-    os.port:      22                              # remote machine SSH port
-    
-
-  server:
-    spm.host: ${}
-    is.um.url: "nsp://${spm.host}:${um.instance.port}" # proper UM URL
-
-
-  cluster:                                        ### new environment type
-    spm.hosts: ${}                                # one or more hosts for the environment
-    is.hosts: ${}                                 # one or more hosts defined as [host1,host2]
-    um.host: ${}                                  # one host
-    is.um.url: "nsp://${um.host}:${um.instance.port}" # proper UM URL
 
 
 layers:                                            # LAYERS definition
@@ -167,11 +148,3 @@ provision:                                         # PROVISIONing mapping of lay
     management:  ${spm.alias}                      # management layer is single node
     messaging:   ${spm.alias}                      # messaging layer is single node
     integration: ${spm.alias}                      # integration layer is single node
-  server:                                          # default environment type
-    management:  ${spm.host}                       # management layer is single node
-    messaging:   ${spm.host}                       # messaging layer is single node
-    integration: ${spm.host}                       # integration layer is single node
-  cluster:                                       ### new environment type
-    management:  ${spm.hosts}                      # management layer
-    messaging:   ${um.host}                        # messaging layer
-    integration: ${is.hosts}                       # integration layer
