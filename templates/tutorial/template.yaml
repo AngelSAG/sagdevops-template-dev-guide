@@ -21,9 +21,9 @@ environments:
     um.fixes:     ALL                              # Set of UM fixes 
 
 layers:                                            # LAYERS definition
-  default:                                         # management layer with SPMs
-    productRepo: ${repo.product}                   # product repository for this layer 
-    fixRepo:     ${repo.fix}                       # fix repository for this layer
+  default:                                         # defaults
+    productRepo: ${repo.product}                   # product repository for all layers 
+    fixRepo:     ${repo.fix}                       # fix repository for all layers
   management:                                      # management layer with SPMs
     templates:   [plugins]                         # templates to apply to this layer
   messaging:
