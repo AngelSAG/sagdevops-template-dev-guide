@@ -7,6 +7,4 @@ jobs:
       script: 
         - mkdir -p build/cc && cd build/cc && git clone --recursive https://github.com/SoftwareAG/sagdevops-cc-server.git . 
         - ant boot credentials masters licenses installers -Denv=tutorial -Daccept.license=true
-    - stage: test
-      script:
-        - ant templates
+        - cd ../.. && ant up log logs ps
