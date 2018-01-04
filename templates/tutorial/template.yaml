@@ -16,36 +16,30 @@ environments:
     install.dir:  ${}                              # SPM installation directory
     spm.port:     8192                             # SPM connection port
     spm.alias:    dev${spm.port}                   # SPM alias
-    product.repo: ${}                              # Product repo           
-    fix.repo:     ${}                              # Fixes repository
+    repo.product: ${}                              # Product repo
+    repo.fix:     ${}                              # Fixes repository
     spm.fixes:    ALL                              # Default list of fixes to install
     is.fixes:     ALL                              # Set of IS fixes 
     um.fixes:     ALL                              # Set of UM fixes 
-    is.license.key.alias: ${}                      # Alias for IS license key
-    um.license.key.alias: ${}                      # Alias for UM license key   
+    is.license.key: ${}                            # Alias for IS license key
+    um.license.key: ${}                            # Alias for UM license key 
 
-    #configuration
-    is.memory.init:   ${}
-    is.memory.max:    ${}
-    um.memory.init:   ${}
-    um.memory.max:    ${}
-    um.memory.direct: ${}
-
+    # configuration
+    is.memory.init:   128
+    is.memory.max:    512
+    um.memory.init:   128
+    um.memory.max:    512
 
 layers:                                            # LAYERS definition
+  default:                                         # default repos for all layers
+    productRepo: ${repo.product}                   # product repository
+    fixRepo:     ${repo.fix}                       # fix repository
   management:                                      # management layer with SPMs
-    productRepo: ${product.repo}                   # product repository for this layer 
-    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [plugins]                         # templates to apply to this layer
   messaging:
-    productRepo: ${product.repo}                   # product repository for this layer 
-    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [um]                              # templates to apply to this layer
   integration:
-    productRepo: ${product.repo}                   # product repository for this layer 
-    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [is]                              # templates to apply to this layer
-    
 
 templates:                                         # TEMPLATES definition
   plugins:                                         # template alias
@@ -55,7 +49,7 @@ templates:                                         # TEMPLATES definition
     fixes: ${spm.fixes}                            # fixes to install
   is:                                              # template alias
     licenses:                                      # copy lincense from the license repository to a template location
-         "IntegrationServer/config/licenseKey.xml": ${is.license.key.alias} 
+      "IntegrationServer/config/licenseKey.xml": ${is.license.key} 
     products:                                      # product list to install
       integrationServer:                           # Integration Server productId
         inst1:                                     # instance name to create or update
@@ -73,7 +67,7 @@ templates:                                         # TEMPLATES definition
     fixes: ${is.fixes}                             # fixes to install
   um:                                              # template alias
     licenses:                                      # copy lincense from the license repository to a template location
-          "UniversalMessaging/server/templates/licence.xml": ${um.license.key.alias}     
+      "UniversalMessaging/server/templates/licence.xml": ${um.license.key}     
     products:                                      # product list to install
       NUMRealmServer:                              # Universal Messaging productId
         inst1:                                     # instance name to create or update
@@ -87,10 +81,6 @@ templates:                                         # TEMPLATES definition
                 COMMON-MEMORY:
                   InitSize: '${um.memory.init}'
                   MaxSize: '${um.memory.max}'
-                  ExtendedProperties:
-                    Property:
-                    - '@name': -XX:MaxDirectMemorySize
-                      $: ${um.memory.direct}
     fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
@@ -104,7 +94,6 @@ nodes:                                             # NODES definition
 
    ${spm.alias}:                                   # definition for specific nodeAlias
      host: localhost                               # Use localhost
- 
  
 provision:                                         # PROVISIONing mapping of layers to nodes
   default:                                         # default environment type
