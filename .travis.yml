@@ -1,0 +1,13 @@
+language: java
+jdk:
+  - oraclejdk8
+jobs:
+  include:
+    - stage: tools
+      script: 
+        - mkdir -p build/cc && cd build/cc && git git clone --recursive https://github.com/SoftwareAG/sagdevops-cc-server.git . 
+        - ant boot credentials masters licenses installers -Denv=tutorial -Daccept.license=true
+    - stage: test
+      script:
+        - ant templates
+
