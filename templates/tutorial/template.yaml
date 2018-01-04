@@ -14,60 +14,51 @@ changes:
    
 environments:
   default:
-    install.dir:  ${}                              # SPM installation directory
-    spm.port:     8192                             # SPM connection port
-    spm.alias:    dev${spm.port}                   # SPM alias
-    product.repo: ${}                              # Product repo           
-    fix.repo:     ${}                              # Fixes repository
-    spm.fixes:    ALL                              # Default list of fixes to install
-    is.fixes:     ALL                              # Set of IS fixes 
-    um.fixes:     ALL                              # Set of UM fixes 
-    is.license.key.alias: ${}                      # Alias for IS license key
-    um.license.key.alias: ${}                      # Alias for UM license key   
+    install.dir:     ${user.home}/sag/${spm.alias}  # SPM installation directory
+    spm.port:        8192                           # SPM connection port
+    spm.alias:       dev${spm.port}                 # SPM alias
+    repo.product:    ${}                            # Product repository           
+    repo.fix:        ${}                            # Fixes repository
+    spm.fixes:       ALL                            # Default list of fixes to install
+    is.fixes:        ALL                            # Set of IS fixes 
+    um.fixes:        ALL                            # Set of UM fixes 
+    is.license.key:  "*_PIE_*_*_${os.platform}"   # Default alias for IS license key
+    um.license.key:  "*_NUMWF_*_*_${os.platform}" # Default alias for UM license key
 
-    #configuration
-    is.memory.init:   ${}
-    is.memory.max:    ${}
-    um.memory.init:   ${}
-    um.memory.max:    ${}
-    um.memory.direct: ${}
+    # configuration
+    is.memory.init:  128
+    is.memory.max:   512
+    um.memory.init:  128
+    um.memory.max:   512
 
     um.instance.port: 9001
-    is.um.url: "nsp://localhost:${um.instance.port}" # proper UM URL
+    is.um.url:       "nsp://localhost:${um.instance.port}" # proper UM URL
 
-    os.username:  ${}                             # remote machine SSH username
-    os.password:  ${}                             # remote machine SSH password
-    os.auth.method: PASSWORD                      # remote machine auth method
-                                                  # PASSWORD,INTERACTIVE,CERTIFICATE
-    os.port:      22                              # remote machine SSH port
-    
+    os.port:         22                            # remote machine SSH port
 
   server:
-    spm.host: ${}
-    is.um.url: "nsp://${spm.host}:${um.instance.port}" # proper UM URL
+    os.credentials:  ${}                           # remote machine SSH credentials
+    spm.alias:       ${}
+    spm.host:        ${}
+    is.um.url:       "nsp://${spm.host}:${um.instance.port}" # proper UM URL
 
-
-  cluster:                                        ### new environment type
-    spm.hosts: ${}                                # one or more hosts for the environment
-    is.hosts: ${}                                 # one or more hosts defined as [host1,host2]
-    um.host: ${}                                  # one host
-    is.um.url: "nsp://${um.host}:${um.instance.port}" # proper UM URL
-
+  cluster:                                         ### new environment type
+    os.credentials:  ${}                           # remote machine SSH credentials
+    spm.hosts:       ${}                           # one or more hosts for the environment
+    is.hosts:        ${}                           # one or more hosts defined as [host1,host2]
+    um.host:         ${}                           # one host
+    is.um.url:       "nsp://${um.host}:${um.instance.port}" # proper UM URL
 
 layers:                                            # LAYERS definition
+  default:                                         # defaults for all layers
+    productRepo: ${repo.product}                   # product repository for this layer 
+    fixRepo:     ${repo.fix}                       # fix repository for this layer
   management:                                      # management layer with SPMs
-    productRepo: ${product.repo}                   # product repository for this layer 
-    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [plugins]                         # templates to apply to this layer
   messaging:
-    productRepo: ${product.repo}                   # product repository for this layer 
-    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [um]                              # templates to apply to this layer
   integration:
-    productRepo: ${product.repo}                   # product repository for this layer 
-    fixRepo:     ${fix.repo}                       # fix repository for this layer
     templates:   [is]                              # templates to apply to this layer
-    
 
 templates:                                         # TEMPLATES definition
   plugins:                                         # template alias
@@ -77,7 +68,7 @@ templates:                                         # TEMPLATES definition
     fixes: ${spm.fixes}                            # fixes to install
   is:                                              # template alias
     licenses:                                      # copy lincense from the license repository to a template location
-         "IntegrationServer/config/licenseKey.xml": ${is.license.key.alias} 
+      "IntegrationServer/config/licenseKey.xml": "${is.license.key}" 
     products:                                      # product list to install
       integrationServer:                           # Integration Server productId
         inst1:                                     # instance name to create or update
@@ -122,14 +113,15 @@ templates:                                         # TEMPLATES definition
                       - '@name': um_followTheMasterForPublish
                         $: 'true'
     fixes: ${is.fixes}                             # fixes to install
+
   um:                                              # template alias
     licenses:                                      # copy lincense from the license repository to a template location
-          "UniversalMessaging/server/templates/licence.xml": ${um.license.key.alias}     
+      "UniversalMessaging/server/templates/licence.xml": "${um.license.key}"     
     products:                                      # product list to install
       NUMRealmServer:                              # Universal Messaging productId
         inst1:                                     # instance name to create or update
           instance.port:    ${um.instance.port}
-          instance.ip:      localhost
+          instance.ip:      ${node.host}
           runtimeComponentId: Universal-Messaging-${instance.name}
           license.file: UniversalMessaging/server/templates/licence.xml
           configuration:
@@ -137,30 +129,28 @@ templates:                                         # TEMPLATES definition
               COMMON-MEMORY:
                 COMMON-MEMORY:
                   InitSize: '${um.memory.init}'
-                  MaxSize: '${um.memory.max}'
-                  ExtendedProperties:
-                    Property:
-                    - '@name': -XX:MaxDirectMemorySize
-                      $: ${um.memory.direct}
+                  MaxSize:  '${um.memory.max}'
     fixes: ${um.fixes}                             # fixes to install
 
 nodes:                                             # NODES definition
- default:                                          # defaults for any environment type
-   default:                                        # default node definition
-     port: ${spm.port}                             # SPM connection HTTP/S port
-     secure: false                                 # do not use SSL port
-     bootstrapInfo:
-       installDir: ${install.dir}                  # installation directory
-       installer:  ${cc.installer}                 # cc installer that can be found in cc_home/profiles/CCE/data/installers     
-       credentials:                               # remote host credentials
-          userName: ${os.username}                 # remote host SSH username
-          password: ${os.password}                 # remote host SSH password
-          authenticationMethod: ${os.auth.method}  # auth method
-
-
-   ${spm.alias}:                                   # definition for specific nodeAlias
-     host: localhost                               # Use localhost
- 
+  default:                                         # defaults for any environment type
+    default:                                       # default node definition
+      port: ${spm.port}                            # SPM connection HTTP/S port
+      secure: false                                # do not use SSL port
+      bootstrapInfo:
+        installDir: ${install.dir}                 # installation directory
+        installer:  ${cc.installer}                # cc installer that can be found in cc_home/profiles/CCE/data/installers     
+    ${spm.alias}:                                  # definition for specific nodeAlias
+      host: localhost                              # Use localhost
+  server:
+    ${spm.alias}:                                  # definition for specific nodeAlias
+      host: ${spm.host}                            # Use specific host
+      bootstrapInfo:
+        credentials: ${os.credentials}             # remote host credentials
+  cluster:
+    default:                                       # definition for specific nodeAlias
+      bootstrapInfo:
+        credentials: ${os.credentials}             # remote host credentials
  
 provision:                                         # PROVISIONing mapping of layers to nodes
   default:                                         # default environment type
@@ -168,9 +158,9 @@ provision:                                         # PROVISIONing mapping of lay
     messaging:   ${spm.alias}                      # messaging layer is single node
     integration: ${spm.alias}                      # integration layer is single node
   server:                                          # default environment type
-    management:  ${spm.host}                       # management layer is single node
-    messaging:   ${spm.host}                       # messaging layer is single node
-    integration: ${spm.host}                       # integration layer is single node
+    management:  ${spm.alias}                      # management layer is single node
+    messaging:   ${spm.alias}                      # messaging layer is single node
+    integration: ${spm.alias}                      # integration layer is single node
   cluster:                                       ### new environment type
     management:  ${spm.hosts}                      # management layer
     messaging:   ${um.host}                        # messaging layer
