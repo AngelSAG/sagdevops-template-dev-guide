@@ -22,8 +22,8 @@ environments:
     spm.fixes:       ALL                            # Default list of fixes to install
     is.fixes:        ALL                            # Set of IS fixes 
     um.fixes:        ALL                            # Set of UM fixes 
-    is.license.key:  "*_PIE_*_*_${os.platform}"   # Default alias for IS license key
-    um.license.key:  "*_NUMWF_*_*_${os.platform}" # Default alias for UM license key
+    is.license.key:  ${}                            # Default alias for IS license key
+    um.license.key:  ${}                            # Default alias for UM license key
 
     # configuration
     is.memory.init:  128
