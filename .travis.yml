@@ -11,4 +11,4 @@ jobs:
         - cd ../..
       script: 
         - export RELEASE=10.1
-        - ant up log logs ps -Denv=travis
+        - ant up ps -Denv=travis | ant log logs
