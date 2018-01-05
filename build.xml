@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <project>
 	<import file="antcc/main.xml" />
+
+	<target name="up" depends="sagenvInit2,sagenv.up" />
+
 </project>
