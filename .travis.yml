@@ -7,7 +7,7 @@ jobs:
       install:
         - mkdir -p build/cc && cd build/cc && git clone --recursive https://github.com/SoftwareAG/sagdevops-cc-server.git . 
         - ant boot -Daccept.license=true
-        - ant credentials masters licenses installers -Denv=tutorial
+        - ant credentials masters licenses installers mirrors -Denv=tutorial
         - cd ../..
       script: 
         - export RELEASE=10.1
